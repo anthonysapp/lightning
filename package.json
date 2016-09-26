@@ -1,0 +1,19 @@
+{
+  "name": "lightning",
+  "version": "0.1.0",
+  "description": "PIXI Application starter using TypeScript",
+  "main": "lightning.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://cjsapptime@bitbucket.org/cjsapptime/lightning.git"
+  },
+  "keywords": [
+    "TypeScript",
+    "PIXI JS"
+  ],
+  "author": "anthony.sapp@campjefferson.com",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/cjsapptime/lightning#readme",
+  "devDependencies": {
+  }
+}
