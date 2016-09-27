@@ -1,5 +1,6 @@
 import {Application} from 'bolt/mvc';
-import {StateManager, Factory} from '../core';
+import {StateManager, Factory, Camera, Loader, IUpdateable} from '../core';
+import {Container} from '../display';
 
 
 export interface IPIXIConfig {
@@ -13,14 +14,20 @@ export class PIXIApplication extends Application {
     // main containers
     public stage: PIXI.Container;
     public game: PIXI.Container;
-    public ui: PIXI.Container;
+    public ui: Container;
 
     // app info
     public resolution: number = 1;
 
+
+    // camera
+    public camera: Camera;
+
     // management
     public state: StateManager;
-    public add: Factory;
+    public asset: Loader;
+    public addToGame: Factory;
+    public addToUI: Factory;
 
     // pixi
     public renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer;
@@ -32,22 +39,20 @@ export class PIXIApplication extends Application {
         this.startup();
     }
 
+    // get singleton instance
+    public static getInstance(): PIXIApplication {
+        return Application.getInstance() as PIXIApplication;
+    }
+
+    // public methods
+
     public startup() {
-        console.log('application startup');
         this.createMediator();
         this.setup();
     }
 
-    public addToGame(obj: PIXI.DisplayObject): PIXI.DisplayObject {
-        return this.game.addChild(obj);
-    }
-
-    public addToUI(obj: PIXI.DisplayObject): PIXI.DisplayObject {
-        return this.ui.addChild(obj);
-    }
-
-    public static getInstance(): PIXIApplication {
-        return Application.getInstance() as PIXIApplication;
+    public updateCamera(): void {
+        this.game.position.set(-this.camera.x, -this.camera.y);
     }
 
     // private methods
@@ -60,7 +65,7 @@ export class PIXIApplication extends Application {
     }
 
     protected setupInternal(): void {
-        this.resolution = window.devicePixelRatio ? window.devicePixelRatio >= 1.5 ? 2 : 1 : 1;
+        this.resolution =  window.devicePixelRatio ? window.devicePixelRatio >= 1.5 ? 2 : 1 : 1;
     }
 
     protected setupPIXI(): void {
@@ -95,13 +100,17 @@ export class PIXIApplication extends Application {
         this.game = this.stage.addChild(new PIXI.Container()) as PIXI.Container;
         this.game.name = '__game';
 
-        this.ui = this.stage.addChild(new PIXI.Container()) as PIXI.Container;
+        this.ui = this.stage.addChild(new Container()) as Container;
         this.ui.name = '__ui';
     }
 
     protected setupApp(): void {
+        this.camera = new Camera();
+        this.asset = new Loader();
         this.state = new StateManager();
-        this.add = new Factory();
+
+        this.addToGame = new Factory();
+        this.addToUI = new Factory(this.ui);
     }
 
     protected addStates(): void {
@@ -113,30 +122,15 @@ export class PIXIApplication extends Application {
         this.gameLoop();
     }
 
-    protected update(...containers: PIXI.Container[]): void {
+    protected update(...containers: IUpdateable[]): void {
         for (let i = 0; i < containers.length; i++) {
             this.updateInternal(containers[i]);
         }
     }
 
-    protected updateInternal(container: PIXI.Container): void {
-        let i = 0,
-            child = null;
-
-        if (container['update'] !== undefined && typeof container['update'] === 'function') {
-            container['update']();
-        }
-
-        if (container.children === undefined || container.children.length === 0) {
-            return;
-        }
-
-        for (i = 0; i < container.children.length; i++) {
-            child = container.children[i];
-            if (child.update !== undefined && typeof child.update === 'function') {
-                child.update();
-            }
-            this.updateInternal(child);
+    protected updateInternal(container: IUpdateable): void {
+        if (container.updateable) {
+            container.update();
         }
     }
 
@@ -149,10 +143,10 @@ export class PIXIApplication extends Application {
 
     // getter / setter
     get width(): number {
-        return this.renderer.width;
+        return this.renderer.width / this.resolution;
     }
 
     get height(): number {
-        return this.renderer.height;
+        return this.renderer.height / this.resolution;
     }
 }

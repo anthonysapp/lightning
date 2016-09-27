@@ -1,5 +1,6 @@
 import {PIXIApplication} from '../core/PIXIApplication';
 import {State} from '../display/State';
+
 export class StateManager {
     private app: PIXIApplication;
     private lookup: { [id: string]: State } = {};
@@ -36,21 +37,36 @@ export class StateManager {
         this.nextState = this.lookup[id];
         this.currentState.shutdown();
         this.currentState.visible = false;
+        this.currentState.updateable = false;
 
         // set to next state
         this.currentState = this.nextState;
-        this.bootCurrentState();
+        this.bootCurrentState(); 
         
         // nullify nextstate
         this.nextState = null;
+    }
+
+    public loadComplete():void{
+        this.buildCurrentState();
     }
 
     // private methods
     private bootCurrentState():void{
         this.currentState.init();
         this.currentState.preload();
-        this.currentState.build();
         this.currentState.visible = true;
+
+        if (this.app.asset.hasResources){
+            this.app.asset.start();
+        }else{
+            this.buildCurrentState();
+        }
+    }
+
+    private buildCurrentState():void{
+        this.currentState.build();
+        this.currentState.updateable = true;
     }
 
 }
