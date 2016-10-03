@@ -1,5 +1,5 @@
 import {PIXIApplication} from '../core';
-import {Text, Sprite, MovieClip, Container, TileSprite} from '../display';
+import {Text, Sprite, MovieClip, Container, TileSprite, Rope} from '../display';
 
 export class Factory {
     constructor(public defaultContainer: PIXI.Container = null) {
@@ -17,6 +17,13 @@ export class Factory {
             container = this.defaultContainerInternal;
         }
         return container.addChild(new Sprite(x, y, atlasId, textureId)) as Sprite;
+    }
+
+    public rope(x?: number, y?: number, atlasId?: string | PIXI.Texture, textureId?: string, points?:PIXI.Point[], container: PIXI.Container = null): Rope {
+        if (!container) {
+            container = this.defaultContainerInternal;
+        }
+        return container.addChild(new Rope(x, y, atlasId, textureId, points)) as Rope;
     }
 
     public tileSprite(x?: number, y?: number, atlasId?: string | PIXI.Texture, textureId?: string, width?: number, height?: number, container: PIXI.Container = null): Sprite {
