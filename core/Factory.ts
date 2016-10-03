@@ -12,14 +12,14 @@ export class Factory {
         return container.addChild(new Text(x, y, text, font, fontSize, fontColor)) as Text;
     }
 
-    public sprite(x?: number, y?: number, atlasId?:string | PIXI.Texture, textureId?: string, container: PIXI.Container = null): Sprite {
+    public sprite(x?: number, y?: number, atlasId?: string | PIXI.Texture, textureId?: string, container: PIXI.Container = null): Sprite {
         if (!container) {
             container = this.defaultContainerInternal;
         }
         return container.addChild(new Sprite(x, y, atlasId, textureId)) as Sprite;
     }
 
-    public tileSprite(x?: number, y?: number, atlasId?:string | PIXI.Texture, textureId?: string, width?:number, height?:number, container: PIXI.Container = null): Sprite {
+    public tileSprite(x?: number, y?: number, atlasId?: string | PIXI.Texture, textureId?: string, width?: number, height?: number, container: PIXI.Container = null): Sprite {
         if (!container) {
             container = this.defaultContainerInternal;
         }
@@ -38,6 +38,13 @@ export class Factory {
             container = this.defaultContainerInternal;
         }
         return container.addChild(new Container(x, y)) as Container;
+    }
+
+    public existing(existingElement: any, container: PIXI.Container = null): PIXI.DisplayObject {
+        if (!container) {
+            container = this.defaultContainerInternal;
+        }
+        return container.addChild(existingElement);
     }
 
     // private methods
