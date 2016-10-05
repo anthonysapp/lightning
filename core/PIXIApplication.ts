@@ -1,5 +1,5 @@
 import {Application} from 'bolt/mvc';
-import {StateManager, Factory, Camera, Loader, IUpdateable} from '../core';
+import {StateManager,SoundManager, Factory, Camera, Loader, IUpdateable} from '../core';
 import {Container} from '../display';
 
 
@@ -26,6 +26,7 @@ export class PIXIApplication extends Application {
     // management
     public state: StateManager;
     public asset: Loader;
+    public sound: SoundManager;
     public addToGame: Factory;
     public addToUI: Factory;
 
@@ -107,6 +108,7 @@ export class PIXIApplication extends Application {
     protected setupApp(): void {
         this.camera = new Camera();
         this.asset = new Loader();
+        this.sound = new SoundManager();
         this.state = new StateManager();
 
         this.addToGame = new Factory();

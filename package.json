@@ -15,7 +15,8 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/cjsapptime/lightning#readme",
   "dependencies": {
-    "bolt": "git://github.com/campjefferson/bolt.git"
+    "bolt": "git://github.com/campjefferson/bolt.git",
+    "howler": "*"
   },
   "devDependencies": {}
 }
